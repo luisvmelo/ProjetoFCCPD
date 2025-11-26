@@ -1,8 +1,9 @@
-# Trabalho de Docker e Microsserviços
+Trabalho FCCPD
+Docker e Microsserviços
 
-Implementação de 5 desafios práticos sobre Docker e arquitetura de microsserviços.
+Implementação dos 5 desafios sobre Docker e arquitetura de microsserviços.
 
-## Estrutura
+Estrutura
 
 - [desafio1/](desafio1/) - Containers em Rede
 - [desafio2/](desafio2/) - Volumes e Persistência
@@ -10,11 +11,9 @@ Implementação de 5 desafios práticos sobre Docker e arquitetura de microsserv
 - [desafio4/](desafio4/) - Microsserviços Independentes
 - [desafio5/](desafio5/) - API Gateway
 
-## Requisitos
-
+Requisitos
 - Docker
 - Docker Compose
 
-## Como executar
-
+Como executar:
 Cada desafio possui seu próprio README com instruções específicas de execução.

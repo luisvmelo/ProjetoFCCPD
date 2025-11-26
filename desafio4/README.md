@@ -28,15 +28,15 @@ Usuário Eduardo está ativo<br>
 Usuário Mayla está ativo
 ```
 
-Fluxo Completo (A → B)
+Fluxo Completo (A - B)
 
 1. Cliente faz requisição: `GET http://localhost:5002/status`
 2. Service B recebe requisição
-3. Service B → Service A: `requests.get('http://service-a:5001/users')`
+3. Service B - Service A: `requests.get('http://service-a:5001/users')`
    -DNS do Docker resolve "service-a" para IP do container
    -Service A processa e retorna JSON
 4. Service B recebe JSON, formata em HTML
-5. Service B → Cliente: Retorna HTML formatado
+5. Service B - Cliente: Retorna HTML formatado
 
 Empacotamento Docker de Cada Serviço
 
@@ -98,4 +98,5 @@ docker network rm servicos-rede
 docker rmi service-a service-b
 ```
 
-NO final de contas não foi usado Docker Compose aqui para demonstrar os conceitos básicos de rede manualmente com `docker run`. A biblioteca Requests é a biblioteca padrão Python para HTTP, simples e confiavel. Service A é interno e não expõe porta, acessível apenas via rede Docker. Service B é exposto como único ponto de entrada para o usuário final. A transformação JSON → HTML demonstra transformação de dados entre serviços. A rede bridge customizada permite DNS e isolamento.
+Decisões técnicas:
+É usado o Docker Compose aqui para demonstrar os conceitos básicos de rede manualmente com `docker run`. A biblioteca Requests é a biblioteca padrão Python para HTTP, simples e confiavel. Service A é interno e não expõe porta, acessível apenas via rede Docker. Service B é exposto como único ponto de entrada para o usuário final. A transformação JSON - HTML demonstra transformação de dados entre serviços. A rede bridge customizada permite DNS e isolamento.

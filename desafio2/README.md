@@ -75,5 +75,5 @@ docker volume rm dados-db
 docker rmi app-persistencia
 ```
 
-
+Decisões técnicas:
 NO final de contas, para esse desafio foi escolhido o SQLite, ele é simples, não requer servidor separado, é feito tudo em 1 arquivo só. Foi usado Timestamps para visualizar acúmulo de dados com prints que mostram claramente quantos registros existem. Por fim, o flag `--rm` "força" boas práticas, poisdados importantes devem estar em volumes.

@@ -7,5 +7,5 @@ echo "Primeira execução:"
 docker run --rm -v dados-db:/data app-persistencia
 
 echo ""
-echo "Segunda execução (deve mostrar 2 registros):"
+echo "Segunda execução:"
 docker run --rm -v dados-db:/data app-persistencia

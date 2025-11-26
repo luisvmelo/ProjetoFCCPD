@@ -63,4 +63,5 @@ docker network rm minha-rede
 docker rmi server-app
 ```
 
+Decisões técnicas:
 Foi escolhido Flask porque é leve e simples, permite adicionar rotas facilmente. Alpine Linux porque a imagem é minimalista, já tem `wget` incluído. Foi usado wget ao invés de curl porque Alpine vem com wget por padrão. O loop com sleep de 5 segundos é um intervalo razoavel para demonstrar comunicação sem sobrecarregar.

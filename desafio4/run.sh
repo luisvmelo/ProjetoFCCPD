@@ -13,4 +13,4 @@ cd ..
 docker run -d --name service-a --network servicos-rede service-a
 docker run -d --name service-b --network servicos-rede -p 5002:5002 service-b
 
-echo "Pronto! Teste com: curl http://localhost:5002/status"
+echo "Use: curl http://localhost:5002/status"

@@ -1,7 +1,7 @@
 Desafio 3
 
 Objetivo:
-Usar Docker Compose para orquestrar múltiplos serviços dependentes. A aplicação tem 3 serviços (web, cache e db) que se comunicam entre si.
+Usar Docker Compose para orquestrar múltiplos serviços dependentes. A aplicação tem 3 serviços web, cache e db, que se comunicam entre si.
 
 Visão Geral dos Serviços
 
@@ -63,13 +63,13 @@ Fluxo de Requisição Completo
 
 1. Usuário acessa `http://localhost:5000/`
 2. Container web recebe requisição
-3. Web → Redis: `redis_client.incr('contador_visitas')`
+3. Web - Redis: `redis_client.incr('contador_visitas')`
    -Conecta em `cache:6379` (DNS resolve para IP do container Redis)
    -Redis incrementa contador e retorna valor atualizado
-4. Web → Postgres: `psycopg2.connect(host='db', ...)`
+4. Web - Postgres: `psycopg2.connect(host='db', ...)`
    -Conecta em `db:5432` para testar conexão
    -Fecha conexão imediatamente (apenas teste)
-5. Web → Usuário: Retorna resposta formatada com contador e status
+5. Web - Usuário: Retorna resposta formatada com contador e status
 
 Endpoints Disponíveis
 
@@ -126,4 +126,5 @@ Derrubar e remover volumes
 docker compose down -v
 ```
 
-NO final de contas foi escolhido Redis para contador porque é mais rápido que armazenar no Postgres, demonstra cache em memória. Postgres como demonstração para mostrar integração com banco relacional, poderia ser usado para logs. Foi usado Alpine nas imagens porque as imagens ficam menores (~5MB vs ~100MB), o deploy fica mais rápido. A rede customizada é melhor que rede padrão, permite DNS e isolamento. O depends_on evita race conditions na inicialização.
+Decisões técnicas:
+Foi escolhido Redis para contador porque é mais rápido que armazenar no Postgres e demonstra cache em memória e Postgres como demonstração para mostrar integração com banco relacional. Foi usado Alpine nas imagens porque as imagens ficam menores (5MB x 100MB) e o deploy fica mais rápido. A rede customizada é melhor que rede padrão e permite DNS e isolamento. O depends_on evita race conditions na inicialização.
