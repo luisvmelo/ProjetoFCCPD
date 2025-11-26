@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - cache
+      - db
+    networks:
+      - app-network
+
+  cache:
+    image: redis:alpine
+    networks:
+      - app-network
+
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: senha123
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
