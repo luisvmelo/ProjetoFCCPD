@@ -1,67 +1,48 @@
-Desafio 1
+# Desafio 1 - Comunicação entre Containers
 
-Objetivo:
-Demonstrar a comunicação entre dois containers Docker usando uma rede bridge customizada. Um container roda um servidor Flask na porta 8080, e outro container age como cliente fazendo requisições HTTP periódicas ao servidor.
+Demonstração de comunicação entre dois containers Docker utilizando rede bridge customizada.
 
-Arquitetura da Solução
+Um container executa um servidor Flask simples, enquanto outro container realiza requisições HTTP periódicas a cada 5 segundos.
 
-Componentes:
--Container Servidor (Flask): Aplicação web simples que responde "OK" nas rotas `/` e `/status`
--Container Cliente (Alpine): Executa um loop infinito com `wget` fazendo requisições ao servidor a cada 5 segundos
--Rede Docker Customizada (minha-rede): Rede bridge que conecta ambos os containers e permite comunicação via DNS
+## Funcionamento
 
-Foi escolhido uma rede bridge customizada ao invés de usar a padrão porque:
--Permite resolução DNS automática (containers se comunicam por nome, não por IP)
--Melhor isolamento (só quem está na rede consegue se comunicar)
--IPs podem mudar entre execuções, mas nomes permanecem consistentes
+O servidor Flask responde "OK" nas rotas `/` e `/status`.
 
-Funcionamento Detalhado
-
-Fluxo de Comunicação
-
-1. Servidor Flask escuta em `0.0.0.0:8080` (aceita conexões de qualquer IP)
-2. Cliente Alpine executa loop:
+O cliente utiliza Alpine Linux e executa um loop contínuo fazendo requisições ao servidor:
 ```bash
 while true; do wget -qO- http://server:8080 && echo ''; sleep 5; done
 ```
-3. Docker DNS resolve "server" para o IP do container servidor (ex: 172.18.0.2)
-4. Cliente faz requisição HTTP, Servidor responde e Cliente imprime nos logs
-5. Loop aguarda 5 segundos e repete
 
-Logs e Verificação
+A comunicação ocorre pelo nome "server" ao invés de endereço IP. O Docker resolve automaticamente quando os containers estão na mesma rede customizada.
 
-Ao executar `docker logs -f client`, vai aparecer:
-```
-OK
-OK
-OK
-...
-```
+### Rede Bridge Customizada
 
-Cada linha aparece a cada 5 segundos, provando que a comunicação tá ativa.
+Utiliza-se rede bridge customizada pelos seguintes motivos:
+- Containers se comunicam pelo nome através de resolução DNS automática
+- Maior isolamento, apenas containers na mesma rede podem se comunicar
+- Endereços IP podem mudar entre execuções, mas nomes permanecem consistentes
 
-Passo a Passo para Executar
+## Executando o Desafio
 
 ```bash
-1. Dar permissão ao script
 chmod +x run.sh
-
-2. Executar script (cria rede, builda servidor, sobe containers)
 ./run.sh
+```
 
-3. Verificar comunicação em tempo real
+Para verificar a comunicação em tempo real:
+```bash
 docker logs -f client
-(Ctrl+C para sair)
+```
 
-4. Testar manualmente (opcional)
-docker exec client wget -qO- http://server:8080
+O terminal exibirá "OK" a cada 5 segundos, confirmando a comunicação ativa entre os containers.
 
-5. Limpar ambiente
+## Limpeza do Ambiente
+
+```bash
 docker stop server client
 docker rm server client
 docker network rm minha-rede
 docker rmi server-app
 ```
 
-Decisões técnicas:
-Foi escolhido Flask porque é leve e simples, permite adicionar rotas facilmente. Alpine Linux porque a imagem é minimalista, já tem `wget` incluído. Foi usado wget ao invés de curl porque Alpine vem com wget por padrão. O loop com sleep de 5 segundos é um intervalo razoavel para demonstrar comunicação sem sobrecarregar.
+Flask foi escolhido pela simplicidade e Alpine pela imagem reduzida que já inclui wget por padrão.

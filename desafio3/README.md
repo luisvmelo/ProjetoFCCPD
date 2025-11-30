@@ -1,17 +1,16 @@
-Desafio 3
+# Desafio 3 - Docker Compose
 
-Objetivo:
-Usar Docker Compose para orquestrar múltiplos serviços dependentes. A aplicação tem 3 serviços web, cache e db, que se comunicam entre si.
+Orquestração de múltiplos serviços utilizando Docker Compose: Flask, Redis e PostgreSQL.
 
-Visão Geral dos Serviços
+A aplicação Flask incrementa um contador armazenado no Redis a cada acesso. Também verifica conexão com PostgreSQL para demonstrar integração com banco de dados relacional.
 
--web (Flask): API que incrementa contador no Redis e verifica conexão com Postgres
--cache (Redis): Armazena contador de visitas em memória
--db (PostgreSQL): Banco de dados relacional (demonstra integração multi-serviço)
+## Serviços
 
-Arquitetura do docker-compose.yml
+- **web** - Aplicação Flask na porta 5000
+- **cache** - Redis para armazenamento do contador
+- **db** - PostgreSQL para demonstração de conectividade
 
-Estrutura dos Services
+## Configuração Docker Compose
 
 ```yaml
 services:
@@ -22,109 +21,60 @@ services:
     depends_on:
       - cache
       - db
-    networks:
-      - app-network
 
   cache:
     image: redis:alpine
-    networks:
-      - app-network
 
   db:
     image: postgres:alpine
     environment:
       POSTGRES_PASSWORD: senha123
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
 ```
 
-Explicação dos Conceitos
+O parâmetro `depends_on` garante que os serviços cache e db sejam iniciados antes do web. Todos os serviços compartilham a mesma rede Docker, permitindo comunicação através de nomes: `cache:6379` e `db:5432`.
 
-depends_on:
-Garante ordem de inicialização. O serviço `web` só inicia depois que `cache` e `db` estiverem rodando. Evita erros de "conexão recusada" ao tentar conectar em serviços que ainda não subiram.
-
-networks:
-Todos os serviços compartilham a rede `app-network`. Isso permite comunicação via DNS (ex: `redis://cache:6379`, `postgresql://db:5432`). Serviços fora da rede não conseguem se comunicar.
-
-environment:
-Define variáveis de ambiente necessárias. PostgreSQL requer `POSTGRES_PASSWORD` para iniciar.
-
-build vs image:
--`build: .` constrói imagem a partir do Dockerfile no diretório atual (usado em `web`)
--`image: redis:alpine` usa imagem pronta do Docker Hub (usado em `cache` e `db`)
-
-Comunicação Entre Serviços na Prática
-
-Fluxo de Requisição Completo
-
-1. Usuário acessa `http://localhost:5000/`
-2. Container web recebe requisição
-3. Web - Redis: `redis_client.incr('contador_visitas')`
-   -Conecta em `cache:6379` (DNS resolve para IP do container Redis)
-   -Redis incrementa contador e retorna valor atualizado
-4. Web - Postgres: `psycopg2.connect(host='db', ...)`
-   -Conecta em `db:5432` para testar conexão
-   -Fecha conexão imediatamente (apenas teste)
-5. Web - Usuário: Retorna resposta formatada com contador e status
-
-Endpoints Disponíveis
-
--GET /: Mostra contador de visitas e status do Postgres
--GET /reset: Reseta contador para 0
-
-Exemplo de Teste
+## Executando o Desafio
 
 ```bash
-Primeira visita
-curl http://localhost:5000/
-Contador: 1
-
-Recarregar várias vezes
-curl http://localhost:5000/
-Contador: 2
-curl http://localhost:5000/
-Contador: 3
-
-Resetar
-curl http://localhost:5000/reset
-
-Verificar
-curl http://localhost:5000/
-Contador: 1 (resetou)
-```
-
-Como Subir, Derrubar e Testar
-
-```bash
-Subir todos os serviços
 docker compose up --build
+```
 
-Subir em background (libera o terminal)
+Para execução em background:
+```bash
 docker compose up -d
+```
 
-Testar via curl
-curl http://localhost:5000
+Acessar `http://localhost:5000` e recarregar a página para incrementar o contador.
 
-Ver logs de todos os serviços
+Para resetar o contador: `http://localhost:5000/reset`
+
+## Comandos Úteis
+
+```bash
+# Visualizar logs de todos os serviços
 docker compose logs
 
-Ver logs de um serviço específico
+# Visualizar logs de um serviço específico
 docker compose logs web
-docker compose logs cache
 
-Ver status dos serviços
+# Verificar status dos serviços
 docker compose ps
 
-Derrubar tudo
+# Encerrar todos os serviços
 docker compose down
-
-Derrubar e remover volumes
-docker compose down -v
 ```
 
-Decisões técnicas:
-Foi escolhido Redis para contador porque é mais rápido que armazenar no Postgres e demonstra cache em memória e Postgres como demonstração para mostrar integração com banco relacional. Foi usado Alpine nas imagens porque as imagens ficam menores (5MB x 100MB) e o deploy fica mais rápido. A rede customizada é melhor que rede padrão e permite DNS e isolamento. O depends_on evita race conditions na inicialização.
+## Testando a Aplicação
+
+```bash
+curl http://localhost:5000
+# Contador incrementa
+
+curl http://localhost:5000/reset
+# Contador resetado
+
+curl http://localhost:5000
+# Contador reinicia em 1
+```
+
+Redis foi utilizado para o contador devido à maior performance em operações de leitura/escrita em memória. As imagens Alpine reduzem o tamanho total e aceleram o processo de build.

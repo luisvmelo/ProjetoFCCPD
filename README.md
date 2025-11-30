@@ -1,19 +1,19 @@
-Trabalho FCCPD
+# Trabalho FCCPD
 Docker e Microsserviços
 
-Implementação dos 5 desafios sobre Docker e arquitetura de microsserviços.
+Implementação de 5 desafios práticos sobre Docker e arquitetura de microsserviços.
 
-Estrutura
+## Estrutura dos Desafios
 
-- [desafio1/](desafio1/) - Containers em Rede
-- [desafio2/](desafio2/) - Volumes e Persistência
-- [desafio3/](desafio3/) - Docker Compose
-- [desafio4/](desafio4/) - Microsserviços Independentes
-- [desafio5/](desafio5/) - API Gateway
+- **desafio1** - Comunicação entre containers usando redes Docker
+- **desafio2** - Persistência de dados com volumes
+- **desafio3** - Orquestração de serviços com Docker Compose
+- **desafio4** - Microsserviços independentes comunicando via HTTP
+- **desafio5** - API Gateway como ponto de entrada centralizado
 
-Requisitos
+## Requisitos
+
 - Docker
 - Docker Compose
 
-Como executar:
-Cada desafio possui seu próprio README com instruções específicas de execução.
+Cada desafio possui documentação específica com instruções de execução no respectivo diretório.

@@ -11,12 +11,11 @@ def status():
 
         resultado = []
         for usuario in usuarios:
-            resultado.append(f"Usuário {usuario['nome']} está ativo")
+            resultado.append(f"{usuario['nome']} ativo")
 
         return '<br>'.join(resultado)
-
-    except requests.exceptions.ConnectionError:
-        return "Erro: Não foi possível conectar ao Service A", 500
+    except:
+        return "service-a offline", 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)
